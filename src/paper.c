@@ -25,6 +25,7 @@
 #include <string.h>
 #include <stdbool.h>
 #include <fcntl.h>
+#include <math.h>
 
 #include <glad/glad.h>
 #include <glad/glad_egl.h>
@@ -52,9 +53,17 @@ static void nop() {}
 
 /* Init file descriptor for FIFO */
 #define N_SAMPLES 44100 / 25
+#define S_INT_MIN -32768
 
 short int samples[N_SAMPLES];
 int fifo_fd;
+
+struct stereo {
+    //int samples;
+    short int left[];
+    short int right[];
+    //size_t short_height;
+};
 
 static void add_interface(void* data, struct wl_registry* registry, uint32_t name, const char* interface, uint32_t version) {
 	(void) data;
@@ -166,22 +175,48 @@ static int fifo_open(char *fifo_path) {
     return (fd);
 }
 
-static float fifo_read_sample() {
+static float fifo_read_sample(struct stereo *x) {
     int data = 0;
     data = read(fifo_fd, samples, N_SAMPLES * sizeof(short int));
     if (data < 0) {
 		fprintf(stderr, "Couldn't read fifo\n");
 		return (0);
     }
-    int i = 0;
-    int sum = 0;
-    while (i < (data/sizeof(short int))) {
-        sum += samples[i];
-        i++;
-    }
-    float sum1 = (float)sum / 300000.0;
-	fprintf(stderr, "Sum is %.6f \n", sum1);
-    return (sum1);
+    const int samples_read = data / sizeof(short int);
+    float m_auto_scale_multiplier = 1.0/25.0;
+    
+    for (int i = 0; i < N_SAMPLES; i++)
+	{
+		double scale = S_INT_MIN;
+		scale /= samples[i];
+		scale = abs(scale);
+		if (scale < m_auto_scale_multiplier)
+			m_auto_scale_multiplier = scale;
+	}
+    
+    for (int i = 0; i < N_SAMPLES; i++)
+	{
+		int tmp = samples[i];
+		if (m_auto_scale_multiplier <= 50.0) // limit the auto scale
+			tmp *= m_auto_scale_multiplier;
+		if (tmp < S_INT_MIN)
+			samples[i] = S_INT_MIN;
+		else if (tmp > S_INT_MIN)
+			samples[i] = S_INT_MIN;
+		else
+			samples[i] = tmp;
+	}
+	
+    
+    samples = samples_read/2;
+    x->left[samples];
+    x->right[samples];
+	for (int i = 0, j = 0; i < samples_read; i += 2, ++j)
+	{
+		x->left[j] = samples[i];
+		x->right[j] = samples[i+1];
+	}
+	//x->short_height = output->height/2;
 }
 
 static void draw(GLuint prog) {
@@ -193,7 +228,7 @@ static void draw(GLuint prog) {
 	glUniform2f(resolution, output->width, output->height);
     /* FIFO */
 	GLint fifo = glGetUniformLocation(prog, "fifo");
-	glUniform1f(fifo, fifo_read_sample());
+	glUniform2i(fifo, stereo.right, stereo.left);
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 }
 
@@ -221,6 +256,8 @@ void paper_init(char* _monitor, char* frag_path, uint16_t fps, char* layer_name,
 	start = utils_get_time_millis();
 	wl_list_init(&outputs);
 	struct wl_display* wl = wl_display_connect(NULL);
+    struct stereo;
+
 
     /* Open FD for a fifo stream */
     fifo_fd = fifo_open(fifo_path);
@@ -452,6 +489,7 @@ void paper_init(char* _monitor, char* frag_path, uint16_t fps, char* layer_name,
 		if(use_fbo) {
 			draw_fbo(fbo, render_tex, shader_prog, final_prog, width, height);
 		} else {
+            fifo_read_sample(&stereo);
 			draw(shader_prog);
 		}
 		eglSwapBuffers(egl_display, egl_surface);
