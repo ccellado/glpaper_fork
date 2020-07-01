@@ -207,7 +207,7 @@ static struct stereo* fifo_read_sample() {
 	
     
     int c_samples = samples_read/2;
-    struct stereo *x = malloc(sizeof(struct *stereo);
+    struct stereo *x = malloc(sizeof(struct *stereo));
     x->left = malloc(c_samples * sizeof(short int));
     x->right = malloc(c_samples * sizeof(short int));
 	for (int i = 0, j = 0; i < samples_read; i += 2, ++j)
@@ -228,7 +228,7 @@ static void draw(GLuint prog) {
     /* FIFO */
 	GLint fifo = glGetUniformLocation(prog, "fifo");
     struct stereo *x = fifo_read_sample();
-	glUniform2i(fifo, (int*)x->right, (int*)x->left);
+	glUniform2i(fifo, (int)x->right, (int)x->left);
     
     free(x->right);
     free(x->left);
