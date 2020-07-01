@@ -53,7 +53,7 @@ static void nop() {}
 /* Init file descriptor for FIFO */
 #define N_SAMPLES 44100 / 25
 
-float samples[N_SAMPLES];
+short int samples[N_SAMPLES];
 int fifo_fd;
 
 static void add_interface(void* data, struct wl_registry* registry, uint32_t name, const char* interface, uint32_t version) {
@@ -168,18 +168,18 @@ static int fifo_open(char *fifo_path) {
 
 static float fifo_read_sample() {
     int data; 
-    if (!(data = read(fifo_fd, samples, N_SAMPLES * sizeof(float)))) {
+    if (!(data = read(fifo_fd, samples, N_SAMPLES * sizeof(short int)))) {
 		fprintf(stderr, "Couldn't read fifo\n");
 		exit(7);
     }
     int i = 0;
-    float sum = 0;
-    while (i < N_SAMPLES) {
+    int sum = 0;
+    while (i < (data/sizeof(short int))) {
         sum += samples[i];
         i++;
     }
-    //sum /= (float)(N_SAMPLES);
-	fprintf(stderr, "Sum is %.10f \n", sum);
+    //sum /= (N_SAMPLES);
+	fprintf(stderr, "Sum is %d \n", sum);
     return (samples[0]);
 }
 
