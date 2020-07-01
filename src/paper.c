@@ -58,7 +58,7 @@ static void nop() {}
 short int samples[N_SAMPLES];
 int fifo_fd;
 
-struct 2d {
+struct stereo {
     short int right;
     short int left;
 };
@@ -207,7 +207,7 @@ static struct 2d *fifo_read_sample() {
 	
     
     int c_samples = samples_read/2;
-    struct 2d x;
+    struct stereo x;
     x.left[c_samples];
     x.right[c_samples];
 	for (int i = 0, j = 0; i < samples_read; i += 2, ++j)
@@ -227,7 +227,7 @@ static void draw(GLuint prog) {
 	glUniform2f(resolution, output->width, output->height);
     /* FIFO */
 	GLint fifo = glGetUniformLocation(prog, "fifo");
-    struct 2d *x = fifo_read_sample();
+    struct stereo *x = fifo_read_sample();
 	glUniform2i(fifo, (int)x->right, (int)x->left);
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 }
