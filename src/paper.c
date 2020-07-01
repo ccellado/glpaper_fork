@@ -159,8 +159,9 @@ static void setup_fbo(GLuint* fbo, GLuint* prog, GLuint* texture, GLuint vert, u
 static int fifo_open(char *fifo_path) {
     /* Try to get FD for fifo */
     int fd;
-    if (fd < 0 && (fd = open(fifo_path, O_RDONLY | O_NONBLOCK)) < 0)
-		fprintf(stderr, "Couldn't open \"%1%\" for reading PCM data",
+
+    if ((fd = open(fifo_path, O_RDONLY | O_NONBLOCK)) < 0)
+		fprintf(stderr, "Couldn't open %s for reading PCM data",
                 fifo_path);
 		exit(6);
     return (fd);
