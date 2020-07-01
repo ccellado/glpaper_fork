@@ -207,15 +207,15 @@ static struct stereo* fifo_read_sample() {
 	
     
     int c_samples = samples_read/2;
-    struct stereo *x = malloc(sizeof(struct *stereo));
+    struct stereo *x = malloc(sizeof(struct stereo));
     x->left = malloc(c_samples * sizeof(short int));
     x->right = malloc(c_samples * sizeof(short int));
 	for (int i = 0, j = 0; i < samples_read; i += 2, ++j)
 	{
-		x.left[j] = samples[i];
-		x.right[j] = samples[i+1];
+		x->left[j] = samples[i];
+		x->right[j] = samples[i+1];
     }
-    return (*x);
+    return (x);
 }
 
 static void draw(GLuint prog) {
