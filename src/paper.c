@@ -173,14 +173,14 @@ static float fifo_read_sample() {
 		fprintf(stderr, "Couldn't read fifo\n");
 		exit(7);
     }
-    int i = 0;
-    float sum = 0;
-    while (i < N_SAMPLES) {
-        sum += samples[i];
-        i++;
-    }
-    sum /= N_SAMPLES;
-    return (sum);
+    //int i = 0;
+    //float sum = 0;
+    //while (i < N_SAMPLES) {
+    //    sum += samples[i];
+    //    i++;
+    //}
+    //sum /= N_SAMPLES;
+    return (samples[0]);
 }
 
 static void draw(GLuint prog) {
