@@ -24,6 +24,7 @@
 #include <unistd.h>
 #include <string.h>
 #include <stdbool.h>
+#include <fcntl.h>
 
 #include <glad/glad.h>
 #include <glad/glad_egl.h>
@@ -50,7 +51,7 @@ struct node {
 static void nop() {}
 
 /* Init file descriptor for FIFO */
-#define N_SAMPLES = 44100 / 25
+#define N_SAMPLES 44100 / 25
 
 float samples[N_SAMPLES];
 int fifo_fd;
@@ -165,12 +166,20 @@ static int fifo_open(fifo_path) {
     return (fd);
 }
 
-static void fifo_read_sample() {
+static float fifo_read_sample() {
     int data; 
     if (!(data = read(fifo_fd, samples, N_SAMPLES * sizeof(float)))) {
 		fprintf(stderr, "Couldn't read fifo\n");
 		exit(1);
     }
+    int i = 0;
+    float sum = 0;
+    while (samples) {
+        sum += samples[i];
+        i++;
+    }
+    sum /= N_SAMPLES;
+    return (sum);
 }
 
 static void draw(GLuint prog) {
