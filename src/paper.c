@@ -176,7 +176,7 @@ static int fifo_open(char *fifo_path) {
     return (fd);
 }
 
-static float fifo_read_sample(struct stereo *x) {
+static float fifo_read_sample() {
     int data = 0;
     data = read(fifo_fd, samples, N_SAMPLES * sizeof(short int));
     if (data < 0) {
@@ -229,7 +229,7 @@ static void draw(GLuint prog) {
 	glUniform2f(resolution, output->width, output->height);
     /* FIFO */
 	GLint fifo = glGetUniformLocation(prog, "fifo");
-	glUniform2i(fifo, &right, &left);
+	glUniform2i(fifo, right, left);
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 }
 
@@ -490,7 +490,7 @@ void paper_init(char* _monitor, char* frag_path, uint16_t fps, char* layer_name,
 		if(use_fbo) {
 			draw_fbo(fbo, render_tex, shader_prog, final_prog, width, height);
 		} else {
-            fifo_read_sample(&stereo);
+            fifo_read_sample();
 			draw(shader_prog);
 		}
 		eglSwapBuffers(egl_display, egl_surface);
