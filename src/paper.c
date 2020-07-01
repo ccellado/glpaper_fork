@@ -174,7 +174,7 @@ static float fifo_read_sample() {
     }
     int i = 0;
     float sum = 0;
-    while (samples) {
+    while (i < N_SAMPLES) {
         sum += samples[i];
         i++;
     }
