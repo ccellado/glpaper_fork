@@ -173,7 +173,7 @@ static int fifo_open(char *fifo_path) {
     return (fd);
 }
 
-static struct 2d *fifo_read_sample() {
+static struct stereo* fifo_read_sample() {
     int data = 0;
     data = read(fifo_fd, samples, N_SAMPLES * sizeof(short int));
     if (data < 0) {
@@ -215,7 +215,7 @@ static struct 2d *fifo_read_sample() {
 		x.left[j] = samples[i];
 		x.right[j] = samples[i+1];
 	}
-    return (x);
+    return (*x);
 }
 
 static void draw(GLuint prog) {
