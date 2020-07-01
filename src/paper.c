@@ -178,9 +178,9 @@ static float fifo_read_sample() {
         sum += samples[i];
         i++;
     }
-    //sum /= (N_SAMPLES);
-	fprintf(stderr, "Sum is %d \n", sum);
-    return (samples[0]);
+    float sum1 = (float)sum / 300000.0;
+	fprintf(stderr, "Sum is %.6f \n", sum1);
+    return (sum1);
 }
 
 static void draw(GLuint prog) {
