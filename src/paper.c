@@ -156,7 +156,7 @@ static void setup_fbo(GLuint* fbo, GLuint* prog, GLuint* texture, GLuint vert, u
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-static int fifo_open(fifo_path) {
+static int fifo_open(char *fifo_path) {
     /* Try to get FD for fifo */
     int fd;
     if (fd < 0 && (fd = open(fifo_path, O_RDONLY | O_NONBLOCK)) < 0)
