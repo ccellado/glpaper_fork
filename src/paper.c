@@ -171,7 +171,7 @@ static float fifo_read_sample() {
     data = read(fifo_fd, samples, N_SAMPLES * sizeof(short int));
     if (data < 0) {
 		fprintf(stderr, "Couldn't read fifo\n");
-		exit(7);
+		return (0);
     }
     int i = 0;
     int sum = 0;
