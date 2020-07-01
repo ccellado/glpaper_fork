@@ -227,13 +227,13 @@ static void draw(GLuint prog) {
 	glUniform2f(resolution, output->width, output->height);
     /* FIFO */
 	GLint fifo = glGetUniformLocation(prog, "fifo");
-    struct stereo *x = fifo_read_sample();
-	glUniform2i(fifo, (int)x->right, (int)x->left);
-    
-    free(x->right);
-    free(x->left);
-    free(x);
-
+    if ((struct stereo *x = fifo_read_sample()) != 0)
+    {
+	    glUniform2i(fifo, (int)x->right, (int)x->left);
+        free(x->right);
+        free(x->left);
+        free(x);
+    }
 
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 }
