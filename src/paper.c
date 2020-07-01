@@ -59,8 +59,8 @@ short int samples[N_SAMPLES];
 int fifo_fd;
 
 struct stereo {
-    short int right;
-    short int left;
+    short int right[];
+    short int left[];
 };
 
 static void add_interface(void* data, struct wl_registry* registry, uint32_t name, const char* interface, uint32_t version) {
@@ -215,7 +215,7 @@ static struct stereo* fifo_read_sample() {
 		x.left[j] = samples[i];
 		x.right[j] = samples[i+1];
 	}
-    return (*x);
+    return (x);
 }
 
 static void draw(GLuint prog) {
