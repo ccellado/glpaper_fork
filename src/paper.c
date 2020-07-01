@@ -50,7 +50,8 @@ struct node {
 static void nop() {}
 
 /* Init file descriptor for FIFO */
-const int N_SAMPLES = 44100/25;
+#define N_SAMPLES = 44100 / 25
+
 float samples[N_SAMPLES];
 int fifo_fd;
 

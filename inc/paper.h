@@ -20,6 +20,6 @@
 
 #include <stdint.h>
 
-void paper_init(char* monitor, char* frag_path, uint16_t fps, char* layer_name, uint16_t width, uint16_t height);
+void paper_init(char* monitor, char* frag_path, uint16_t fps, char* layer_name, uint16_t width, uint16_t height, char* fifo_path);
 
 #endif

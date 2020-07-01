@@ -157,7 +157,7 @@ int main(int argc, char** argv) {
 			print_usage(argv);
 		}
 
-		paper_init(argv[optind], argv[optind + 1], fps, layer, width, height, fifo);
+		paper_init(argv[optind], argv[optind + 1], fps, layer, width, height, fifo_path);
 	} else {
 		print_usage(argv);
 	}
