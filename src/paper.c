@@ -161,7 +161,7 @@ static int fifo_open(char *fifo_path) {
     int fd;
 
     if ((fd = open(fifo_path, O_RDONLY | O_NONBLOCK)) < 0)
-		fprintf(stderr, "Couldn't open %s for reading PCM data",
+		fprintf(stdout, "Couldn't open %s for reading PCM data",
                 fifo_path);
 		exit(6);
     return (fd);
