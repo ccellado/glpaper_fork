@@ -206,7 +206,7 @@ static struct 2d *fifo_read_sample() {
 	}
 	
     
-    c_samples = samples_read/2;
+    int c_samples = samples_read/2;
     struct 2d x;
     x.left[c_samples];
     x.right[c_samples];
