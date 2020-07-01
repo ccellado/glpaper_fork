@@ -58,12 +58,13 @@ static void nop() {}
 short int samples[N_SAMPLES];
 int fifo_fd;
 
-struct stereo {
+short int right[];
+short int left[];
+
+//struct stereo {
     //int samples;
-    short int left[];
-    short int right[];
     //size_t short_height;
-};
+//};
 
 static void add_interface(void* data, struct wl_registry* registry, uint32_t name, const char* interface, uint32_t version) {
 	(void) data;
@@ -208,13 +209,13 @@ static float fifo_read_sample(struct stereo *x) {
 	}
 	
     
-    samples = samples_read/2;
-    x->left[samples];
-    x->right[samples];
+    c_samples = samples_read/2;
+    left[c_samples];
+    right[c_samples];
 	for (int i = 0, j = 0; i < samples_read; i += 2, ++j)
 	{
-		x->left[j] = samples[i];
-		x->right[j] = samples[i+1];
+		left[j] = samples[i];
+		right[j] = samples[i+1];
 	}
 	//x->short_height = output->height/2;
 }
@@ -228,7 +229,7 @@ static void draw(GLuint prog) {
 	glUniform2f(resolution, output->width, output->height);
     /* FIFO */
 	GLint fifo = glGetUniformLocation(prog, "fifo");
-	glUniform2i(fifo, stereo.right, stereo.left);
+	glUniform2i(fifo, &right, &left);
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 }
 
