@@ -159,7 +159,6 @@ static void setup_fbo(GLuint* fbo, GLuint* prog, GLuint* texture, GLuint vert, u
 static int fifo_open(char *fifo_path) {
     /* Try to get FD for fifo */
     int fd;
-	fprintf(stderr, "fifo_path is %s\n", fifo_path);
     if ((fd = open(fifo_path, O_RDONLY | O_NONBLOCK)) < 0) {
 		fprintf(stderr, "Couldn't open %s for reading PCM data\n", fifo_path);
 		exit(6);
@@ -173,13 +172,14 @@ static float fifo_read_sample() {
 		fprintf(stderr, "Couldn't read fifo\n");
 		exit(7);
     }
-    //int i = 0;
-    //float sum = 0;
-    //while (i < N_SAMPLES) {
-    //    sum += samples[i];
-    //    i++;
-    //}
-    //sum /= N_SAMPLES;
+    int i = 0;
+    float sum = 0;
+    while (i < N_SAMPLES) {
+        sum += samples[i];
+        i++;
+    }
+    sum /= N_SAMPLES;
+	fprintf(stderr, "Sum is %.6f \n", sum);
     return (samples[0]);
 }
 
