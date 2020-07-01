@@ -167,8 +167,9 @@ static int fifo_open(char *fifo_path) {
 }
 
 static float fifo_read_sample() {
-    int data = 0; 
-    if (!(data = read(fifo_fd, samples, N_SAMPLES * sizeof(short int)))) {
+    int data = 0;
+    data = read(fifo_fd, samples, N_SAMPLES * sizeof(short int));
+    if (data < 0) {
 		fprintf(stderr, "Couldn't read fifo\n");
 		exit(7);
     }
