@@ -1,8 +1,8 @@
+# fork of a https://todo.sr.ht/~scoopta/glpaper
 
 # GLPaper
 GLPaper is a wallpaper program for wlroots based wayland compositors such as sway that allows you to render glsl shaders as your wallpaper
 
-[![builds.sr.ht status](https://builds.sr.ht/~scoopta/glpaper.svg)](https://builds.sr.ht/~scoopta/glpaper?)
 ## Dependencies
 	libwayland-dev
 	libegl-dev
