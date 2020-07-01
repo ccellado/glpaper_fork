@@ -162,7 +162,7 @@ static int fifo_open(fifo_path) {
     if (fd < 0 && (fd = open(fifo_path, O_RDONLY | O_NONBLOCK)) < 0)
 		fprintf(stderr, "Couldn't open \"%1%\" for reading PCM data",
                 fifo_path);
-		exit(1);
+		exit(6);
     return (fd);
 }
 
@@ -170,7 +170,7 @@ static float fifo_read_sample() {
     int data; 
     if (!(data = read(fifo_fd, samples, N_SAMPLES * sizeof(float)))) {
 		fprintf(stderr, "Couldn't read fifo\n");
-		exit(1);
+		exit(7);
     }
     int i = 0;
     float sum = 0;
