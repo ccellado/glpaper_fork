@@ -87,7 +87,7 @@ int main(int argc, char** argv) {
 				.name = "fifo",
 				.has_arg = required_argument,
 				.flag = NULL,
-				.val = 'F'
+				.val = 'M'
 			},
 			{
 				.name = NULL,
@@ -102,7 +102,7 @@ int main(int argc, char** argv) {
 		char* height_str = NULL;
 		char* fifo_path = NULL;
 		char opt;
-		while((opt = getopt_long(argc, argv, "hFf:l:W:H:F:", opts, NULL)) != -1) {
+		while((opt = getopt_long(argc, argv, "hFf:l:W:H:M:", opts, NULL)) != -1) {
 			switch(opt) {
 			case 'h':
 				print_usage(argv);
@@ -127,7 +127,7 @@ int main(int argc, char** argv) {
 			case 'H':
 				height_str = optarg;
 				break;
-			case 'F':
+			case 'M':
 				fifo_path = optarg;
 				break;
 			}
