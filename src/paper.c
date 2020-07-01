@@ -58,13 +58,10 @@ static void nop() {}
 short int samples[N_SAMPLES];
 int fifo_fd;
 
-short int right[];
-short int left[];
-
-//struct stereo {
-    //int samples;
-    //size_t short_height;
-//};
+struct 2d {
+    short int right;
+    short int left;
+};
 
 static void add_interface(void* data, struct wl_registry* registry, uint32_t name, const char* interface, uint32_t version) {
 	(void) data;
@@ -176,7 +173,7 @@ static int fifo_open(char *fifo_path) {
     return (fd);
 }
 
-static float fifo_read_sample() {
+static struct 2d *fifo_read_sample() {
     int data = 0;
     data = read(fifo_fd, samples, N_SAMPLES * sizeof(short int));
     if (data < 0) {
@@ -210,14 +207,15 @@ static float fifo_read_sample() {
 	
     
     c_samples = samples_read/2;
-    left[c_samples];
-    right[c_samples];
+    struct 2d x;
+    x.left[c_samples];
+    x.right[c_samples];
 	for (int i = 0, j = 0; i < samples_read; i += 2, ++j)
 	{
-		left[j] = samples[i];
-		right[j] = samples[i+1];
+		x.left[j] = samples[i];
+		x.right[j] = samples[i+1];
 	}
-	//x->short_height = output->height/2;
+    return (x);
 }
 
 static void draw(GLuint prog) {
@@ -229,7 +227,8 @@ static void draw(GLuint prog) {
 	glUniform2f(resolution, output->width, output->height);
     /* FIFO */
 	GLint fifo = glGetUniformLocation(prog, "fifo");
-	glUniform2i(fifo, right, left);
+    struct 2d *x = fifo_read_sample();
+	glUniform2i(fifo, (int)x->right, (int)x->left);
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 }
 
@@ -257,7 +256,6 @@ void paper_init(char* _monitor, char* frag_path, uint16_t fps, char* layer_name,
 	start = utils_get_time_millis();
 	wl_list_init(&outputs);
 	struct wl_display* wl = wl_display_connect(NULL);
-    struct stereo;
 
 
     /* Open FD for a fifo stream */
