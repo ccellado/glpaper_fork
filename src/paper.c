@@ -179,7 +179,7 @@ static float fifo_read_sample() {
         i++;
     }
     sum /= (float)(N_SAMPLES);
-	fprintf(stderr, "Sum is %.6f \n", sum);
+	fprintf(stderr, "Sum is %.100f \n", sum);
     return (samples[0]);
 }
 
