@@ -173,14 +173,14 @@ static int fifo_open(char *fifo_path) {
     return (fd);
 }
 
-static struct stereo* fifo_read_sample() {
+static struct stereo* fifo_read_sample(int fifo_fd, struct stereo *x) {
     int data = 0;
     data = read(fifo_fd, samples, N_SAMPLES * sizeof(short int));
     if (data < 0) {
 		fprintf(stderr, "Couldn't read fifo\n");
 		return (0);
     }
-    const int samples_read = data / sizeof(short int);
+    const size_t samples_read = data / sizeof(short int);
     float m_auto_scale_multiplier = 1.0/25.0;
     
     for (int i = 0; i < N_SAMPLES; i++)
@@ -191,25 +191,7 @@ static struct stereo* fifo_read_sample() {
 		if (scale < m_auto_scale_multiplier)
 			m_auto_scale_multiplier = scale;
 	}
-    
-    for (int i = 0; i < N_SAMPLES; i++)
-	{
-		int tmp = samples[i];
-		if (m_auto_scale_multiplier <= 50.0) // limit the auto scale
-			tmp *= m_auto_scale_multiplier;
-		if (tmp < S_INT_MIN)
-			samples[i] = S_INT_MIN;
-		else if (tmp > S_INT_MIN)
-			samples[i] = S_INT_MIN;
-		else
-			samples[i] = tmp;
-	}
-	
-    
-    int c_samples = samples_read/2;
-    struct stereo *x = malloc(sizeof(struct stereo));
-    x->left = malloc(c_samples * sizeof(short int));
-    x->right = malloc(c_samples * sizeof(short int));
+    // Нужны нормализации чисел
 	for (int i = 0, j = 0; i < samples_read; i += 2, ++j)
 	{
 		x->left[j] = samples[i];
@@ -218,7 +200,7 @@ static struct stereo* fifo_read_sample() {
     return (x);
 }
 
-static void draw(GLuint prog) {
+static void draw(GLuint prog, int fifo_fd, struct stereo *x) {
 	glUseProgram(prog);
 	glClear(GL_COLOR_BUFFER_BIT);
 	GLint time_var = glGetUniformLocation(prog, "time");
@@ -227,12 +209,13 @@ static void draw(GLuint prog) {
 	glUniform2f(resolution, output->width, output->height);
     /* FIFO */
 	GLint fifo = glGetUniformLocation(prog, "fifo");
-    if ((struct stereo *x = fifo_read_sample()) != 0)
+    if ((fifo_read_sample(fifo_fd, x)) != 0)
     {
-	    glUniform2i(fifo, (int)x->right, (int)x->left);
-        free(x->right);
-        free(x->left);
-        free(x);
+        printf("%d    %d", *x->right, *x->left);
+	    glUniform2f(fifo, *x->right, *x->left);
+        //free(x->right);
+        //free(x->left);
+        //free(x);
     }
 
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
@@ -266,6 +249,9 @@ void paper_init(char* _monitor, char* frag_path, uint16_t fps, char* layer_name,
 
     /* Open FD for a fifo stream */
     fifo_fd = fifo_open(fifo_path);
+    struct stereo *x = malloc(sizeof(struct stereo));
+    x->left = malloc(N_SAMPLES * sizeof(short int));
+    x->right = malloc(N_SAMPLES * sizeof(short int));
 
 	struct wl_registry* registry = wl_display_get_registry(wl);
 	struct wl_registry_listener reg_listener = {
@@ -494,8 +480,7 @@ void paper_init(char* _monitor, char* frag_path, uint16_t fps, char* layer_name,
 		if(use_fbo) {
 			draw_fbo(fbo, render_tex, shader_prog, final_prog, width, height);
 		} else {
-            fifo_read_sample();
-			draw(shader_prog);
+			draw(shader_prog, fifo_fd, x);
 		}
 		eglSwapBuffers(egl_display, egl_surface);
 		if(fps != 0) {
