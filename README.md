@@ -3,6 +3,8 @@
 # GLPaper
 GLPaper is a wallpaper program for wlroots based wayland compositors such as sway that allows you to render glsl shaders as your wallpaper
 
+*NEW* Usage flag -M full_path_to_mpd's_fifo_file to activate 2vec audio channel "fifo"
+
 ## Dependencies
 	libwayland-dev
 	libegl-dev
